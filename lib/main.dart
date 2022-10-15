@@ -116,6 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      // Center is a layout widget. It takes a single child and positions it
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
