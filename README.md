@@ -1,4 +1,4 @@
-# my_app
+# ACM UR app
 
 A new Flutter project.
 
