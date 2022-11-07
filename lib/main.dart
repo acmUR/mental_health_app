@@ -74,8 +74,24 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
+        // the App.build  method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsScreen()));
+                },
+                child: Icon(
+                  Icons.menu,
+                  size: 26.0,
+                ),
+              )),
+        ],
       ),
       body: GridView.count(
         primary: false,
@@ -85,10 +101,12 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisCount: 2,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.teal[100],
-            child: const Text("He'd have you all unravel at the"),
-          ),
+              padding: const EdgeInsets.all(8),
+              color: Colors.teal[100],
+              child: Text(
+                'He\'d have you all unravel at the',
+                style: TextStyle(fontSize: 20.0),
+              )),
           Container(
             padding: const EdgeInsets.all(8),
             color: Colors.teal[200],
@@ -122,6 +140,77 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
         backgroundColor: Colors.red,
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(8),
+        children: <Widget>[
+          Card(
+            child: ListTile(
+              title: Text('Setting 1'),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AppearanceScreen()));
+              },
+              title: Text('Primary Color'),
+              leading: Icon(Icons.border_color_rounded),
+              subtitle: Text('Change the color of the title bar'),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              title: Text('Setting 3'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AppearanceScreen extends StatelessWidget {
+  const AppearanceScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Change Primary Appearance'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(8),
+        children: <Widget>[
+          Card(
+            child: ListTile(
+              title: Text('Primary Color'),
+              leading: Icon(Icons.border_color_rounded),
+              subtitle: Text('Change the color of the title bar'),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              title: Text('Setting 3'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
