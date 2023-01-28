@@ -1,127 +1,112 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'dart:developer';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  static const String _title = 'Academic Support/Resources';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.red,
+      title: _title,
+      home: Scaffold(
+        appBar: AppBar(title: const Text(_title)),
+        body: const MyStatefulWidget(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+// stores ExpansionPanel state information
+class Item {
+  Item({
+    required this.expandedValue,
+    required this.headerValue,
+    this.isExpanded = false,
+  });
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  String expandedValue;
+  String headerValue;
+  bool isExpanded;
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  List<int> arr = [];
+List _data = [];
 
-  void _incrementCounter() {
+class MyStatefulWidget extends StatefulWidget {
+  const MyStatefulWidget({super.key});
+
+  @override
+  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+}
+
+List<Item> generateItems(int numberOfItems) {
+  return List<Item>.generate(numberOfItems, (int index) {
+    return Item(
+      headerValue: _data[index]["header"],
+      expandedValue: _data[index]["text"],
+    );
+  });
+}
+
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+
+  Future<void> readJson() async {
+    final String response = await rootBundle.loadString('assets/input.json');
+    final data = await json.decode(response)["items"];
+    log('$data');
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _items = List<Item>.generate(data.length, (int index) {
+        return Item(
+          headerValue: data[index]["header"],
+          expandedValue: data[index]["text"],
+        );
+      });
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    // return Person(age: 10, name: John)
+  void initState() {
+    readJson();
+    super.initState();
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+  List<Item> _items = [];
+
+  @override
+  Widget build(BuildContext context) {
+
+    return SingleChildScrollView(
+      child: Container(
+        child: _buildPanel(),
       ),
-      body: GridView.count(
-        primary: false,
-        padding: const EdgeInsets.all(20),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: 2,
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.teal[100],
-            child: const Text("He'd have you all unravel at the"),
+    );
+  }
+
+  Widget _buildPanel() {
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          _items[index].isExpanded = !isExpanded;
+        });
+      },
+      children: _items.map<ExpansionPanel>((Item item) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text(item.headerValue),
+            );
+          },
+          body: ListTile(
+            title: Text(item.expandedValue),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.teal[200],
-            child: const Text('Heed not the rabble'),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.teal[300],
-            child: const Text('Sound of screams but the'),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.teal[400],
-            child: const Text('Who scream'),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.teal[500],
-            child: const Text('Revolution is coming...'),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.teal[600],
-            child: const Text('Revolution, they...'),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-        backgroundColor: Colors.cyan,
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          isExpanded: item.isExpanded,
+        );
+      }).toList(),
     );
   }
 }
