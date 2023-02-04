@@ -3,25 +3,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'dart:developer';
 
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  static const String _title = 'Academic Support/Resources';
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(_title)),
-        body: const MyStatefulWidget(),
-      ),
-    );
-  }
-}
-
 // stores ExpansionPanel state information
 class Item {
   Item({
