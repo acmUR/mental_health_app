@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget selfHelp() {
+Widget selfHelpPage() {
   return Scaffold(
     appBar: AppBar(
       title: Text('Welcome to Flutter!'),
@@ -40,20 +40,6 @@ final List<String> selfHelp = <String>[
 ];
 
 // ---------------Level 1 start --------------
-
-// class selfHelpResource extends StatelessWidget {
-//   const selfHelpResource({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Self Help Resource'),
-//       ),
-//       body: Text('you made it! Self Help Resource'),
-//     );
-//   }
-// }
 
 class selfHelpResource extends StatelessWidget {
   const selfHelpResource({super.key});
